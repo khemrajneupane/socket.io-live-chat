@@ -47,7 +47,13 @@ io.on("connection", (socket) => {
       io.to(toSocketId).emit("privateMessage", { from: senderName, message });
     }
   });
+  socket.on("typing", (data) => {
+    socket.broadcast.emit("typing", data); // send to others
+  });
 
+  socket.on("stopTyping", () => {
+    socket.broadcast.emit("stopTyping");
+  });
   // Handle public messages
   socket.on("publicMessage", ({ from, message }) => {
     const senderName =

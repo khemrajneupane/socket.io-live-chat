@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import "./socketui.css"; // Add your own styles or use this as a reference
+import "./socketui.css";
 
 const socket = io("https://socket-io-live-chat.onrender.com/");
 
@@ -10,6 +10,10 @@ const SocketUI = () => {
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState([]);
   const [users, setUsers] = useState([]);
+  const [typingUser, setTypingUser] = useState("");
+
+  const typingTimeoutRef = useRef(null);
+  const isTyping = useRef(false);
 
   useEffect(() => {
     socket.on("privateMessage", ({ from, message }) => {
@@ -24,10 +28,20 @@ const SocketUI = () => {
       setUsers(usernames);
     });
 
+    socket.on("typing", (user) => {
+      setTypingUser(`${user} is typing...`);
+    });
+
+    socket.on("stopTyping", () => {
+      setTypingUser("");
+    });
+
     return () => {
       socket.off("privateMessage");
       socket.off("publicMessage");
       socket.off("usersList");
+      socket.off("typing");
+      socket.off("stopTyping");
     };
   }, []);
 
@@ -54,11 +68,31 @@ const SocketUI = () => {
       });
       setChatLog((prev) => [...prev, `You (to all): ${message}`]);
     }
+
     setMessage("");
+    socket.emit("stopTyping");
+    isTyping.current = false;
+    clearTimeout(typingTimeoutRef.current);
   };
 
   const handleRecipientClick = () => {
     socket.emit("getUsers");
+  };
+
+  const handleTyping = (e) => {
+    const value = e.target.value;
+    setMessage(value);
+
+    if (!isTyping.current && username) {
+      socket.emit("typing", username);
+      isTyping.current = true;
+    }
+
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stopTyping");
+      isTyping.current = false;
+    }, 1000);
   };
 
   return (
@@ -66,6 +100,7 @@ const SocketUI = () => {
       <header>
         <h2>Live Chat App with Socket.IO</h2>
       </header>
+
       <section className="chat-log">
         <ul>
           {chatLog.map((msg, idx) => (
@@ -74,7 +109,9 @@ const SocketUI = () => {
             </li>
           ))}
         </ul>
+        {typingUser && <div className="typing-indicator">{typingUser}</div>}
       </section>
+
       <section className="user-inputs">
         <div className="input-group">
           <label>Your name (optional):</label>
@@ -109,7 +146,8 @@ const SocketUI = () => {
             type="text"
             placeholder="Type a message"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={handleTyping}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
           <button onClick={handleSend}>Send</button>
         </div>
@@ -117,4 +155,5 @@ const SocketUI = () => {
     </div>
   );
 };
+
 export default SocketUI;

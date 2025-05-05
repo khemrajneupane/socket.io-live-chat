@@ -33,6 +33,12 @@ header {
   border-radius: 6px;
   cursor: pointer;
 }
+.typing-indicator {
+  font-style: italic;
+  color: #555;
+  margin-top: 5px;
+}
+
 .chat-log ul {
   list-style: none;
   padding: 0;
