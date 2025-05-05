@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import "./socketui.css"; // Add your own styles or use this as a reference
 
-const socket = io("http://localhost:3001");
+const socket = io("https://socket-io-live-chat.onrender.com/");
 
 const SocketUI = () => {
   const [username, setUsername] = useState("");
