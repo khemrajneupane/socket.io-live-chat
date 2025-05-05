@@ -60,4 +60,4 @@ chmod +x start.sh
 
 Let me know if you want more information on running this app or anything.
 
-Happy Coading ...🚀🚀🚀🚀
+Happy Coding ...🚀🚀🚀🚀
