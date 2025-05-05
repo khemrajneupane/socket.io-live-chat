@@ -18,7 +18,7 @@ A fullstack real-time chat application built with:
 ✅ Auto-suggestion of users when selecting a private chat recipient  
 ✅ Smart fallback: if no recipient is selected, message is public  
 ✅ Fully responsive UI  
-✅ One-click deployment with [Render](https://render.com)
+✅ Deployed: [Socket-io-live-chat](https://socket-io-live-chat.onrender.com/)
 
 ---
 
@@ -29,7 +29,7 @@ A fullstack real-time chat application built with:
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/socket-chat-app.git
+git clone https://github.com/khemrajneupane/socket.io-live-chat
 cd socket-chat-app
 ```
 
